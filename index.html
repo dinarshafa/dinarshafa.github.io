@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Kerawanan Bencana Banjir Sebagian Bantul</title>
+    <link rel="stylesheet" href="library/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="library/leaflet/leaflet.js"></script>
+    <script src="library/leaflet-providers-master/leaflet-providers.js"></script>
+    <script src="library/jquery.min.js"></script>
+</head>
+
+<body>
+    <div id="map">
+        <script>
+            var map = L.map('map').setView([-7.9004539, 110.3334175], 12);
+
+            var baseLayers = {
+                'Esri WorldTopoMap': L.tileLayer.provider('Esri.WorldTopoMap'),
+                'Esri WorldImagery': L.tileLayer.provider('Esri.WorldImagery').addTo(map),
+                'OSM Default': L.tileLayer.provider('OpenStreetMap.DE'),
+                'OSM France': L.tileLayer.provider('OpenStreetMap.France'),
+                'Esri WorldShadedRelief': L.tileLayer.provider('Esri.WorldShadedRelief')
+            };
+
+
+            /* Memanggil Layer Rawan Banjir */
+            var AreaRawanBanjir = L.geoJson(null, {
+                style: function(feature) {
+                    return {
+                        color: "black",
+                        fillColor: KlasBanjir[feature.properties.Klas],
+                        weight: 0.3,
+                        opacity: 0,
+                        fillOpacity: 0.8
+                    };
+                },
+                onEachFeature: function( feature, layer ){
+                    layer.bindPopup(
+                        "Klas Rawan Banjir : " + "<left>" + feature.properties.Klas + "</left>" + "<br>" +
+                        "Luas :" + "<left>" + feature.properties.Luas_area + "</left>" + " m2"
+                        )
+                }
+            });
+            $.getJSON("data/rawann_banjirr_bantul.json", function(data) {
+                AreaRawanBanjir.addData(data);
+            });
+
+			/* Merubah Tampilan Warna Berdasar Atribut Klas Banjir */
+			var KlasBanjir = {
+				"Aman":"#38a800",
+				"Cukup Aman":"#8bd100",
+				"Agak Rawan":"#faf504",
+				"Rawan":"#fb7f04",
+				"Sangat Rawan":"#ff1200"
+			};
+
+              /* Memanggil Layer Rawan Banjir */
+            var PenggunaanLahan = L.geoJson(null, {
+                style: function(feature) {
+                    return {
+                        color: "black",
+                        fillColor: KlasPenggunaanLahan[feature.properties.CLAS1_NAM],
+                        weight: 0.3,
+                        opacity: 0,
+                        fillOpacity: 0.6
+                    };
+                },
+                onEachFeature: function( feature, layer ){
+                    layer.bindPopup(
+                        "Penggunaan Lahan : " + "<left>" + feature.properties.CLAS1_NAM + "</left>" + "<br>" +
+                        "Luas :" + "<left>" + feature.properties.Luas_Area + "</left>" + " m2"
+                        )
+                }
+            });
+            $.getJSON("data/landuse5.json", function(data) {
+                PenggunaanLahan.addData(data);
+            });
+
+            /* Merubah Tampilan Warna Berdasar Atribut Klas Banjir */
+            var KlasPenggunaanLahan = {
+                "Vegetasi Hijau":"#ffff99",
+                "Permukiman":"#ffaa00",
+                "Lahan Terbuka":"#8f8f8f",
+                "Tubuh Air":"#ccffff",
+                "Sawah":"#d9ffc9"
+            };
+
+            var mapLayers = {
+                'Area Rawan Banjir': AreaRawanBanjir,
+                'Penggunaan Lahan' : PenggunaanLahan
+            };
+
+            L.control.layers(baseLayers, mapLayers).addTo(map);
+        </script>
+    </div>
+</body>
+
+</html>
