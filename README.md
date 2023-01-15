@@ -1,2 +1,2 @@
 # dinarshafa.github.io
-Identifikasi Kerawanan Bencana Banjir Sebagian Kabupaten Bantul
+Kerawanan Bencana Banjir Sebagian Kabupaten Bantul
